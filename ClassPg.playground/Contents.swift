@@ -13,43 +13,30 @@ enum CylindersScheme: String {
 }
 
 
-class Engine {
-    
+enum EngineType: String {
+    case diesel
+    case gasolineCarburetor
+    case gasolineInjection
+    case gasolineDirectInjection
+}
+
+
+struct Engine {
+
     private(set) var power: Double
     private(set) var cylindersScheme: CylindersScheme
+    private(set) var type: EngineType
     private(set) var fuelConsumption: Double
-    
-    init(power: Double, cylinderScheme: CylindersScheme, fuelConsumption: Double) {
+
+    init(power: Double, cylinderScheme: CylindersScheme, fuelConsumption: Double, type: EngineType) {
         self.power = power
         self.cylindersScheme = cylinderScheme
         self.fuelConsumption = fuelConsumption
-    }
-    
-    func upgrade(newPower: Double) {
-        self.power = newPower
-    }
-}
-
-
-class DieselEngine : Engine {
-    
-}
-
-
-enum GEType: String {
-    case carburetor
-    case injection
-    case directInjection
-}
-
-
-class GasolineEngine : Engine {
-
-    var type: GEType
-    
-    init(power: Double, cylinderScheme: CylindersScheme, fuelConsumption: Double, type: GEType) {
         self.type = type
-        super.init(power: power, cylinderScheme: cylinderScheme, fuelConsumption: fuelConsumption)
+    }
+
+    mutating func upgrade(newPower: Double) {
+        self.power = newPower
     }
 }
 
@@ -67,11 +54,11 @@ class Car {
     private(set) var driveUnit: DriveUnit
     private(set) var mileage: Double
     private(set) var fuel: Double
-    private(set) var manufactorer: String
+    private(set) var manufactorer: Factory
     
     private let maxFuel: Double
 
-    init(engine: Engine, driveUnit: DriveUnit, maxFuel: Double, manufactorer: String) {
+    init(engine: Engine, driveUnit: DriveUnit, maxFuel: Double, manufactorer: Factory) {
         self.engine = engine
         self.driveUnit = driveUnit
         self.mileage = 0
@@ -115,6 +102,7 @@ class Car {
 
 
 class Sedan: Car {
+    
     func transpotPassengers(passengersCount: Int, distance: Double) {
         if passengersCount > 4 {
             print("Please, stop! Rent a bus to transport \(passengersCount) passengers!")
@@ -129,6 +117,7 @@ class Sedan: Car {
 
 
 class Offroad: Car {
+
     func moveToOffroad(distance: Double) {
         if move(distance: distance * 1.2) {
             print("Vroom vroom, I'm offroad!")
@@ -138,6 +127,7 @@ class Offroad: Car {
 
 
 class Bus: Car {
+
     func transportManyPassengers(passengersCount: Int, distance: Double) {
         if move(distance: distance) {
             print("I can transport many people! And \(passengersCount) passengers too!")
@@ -147,6 +137,7 @@ class Bus: Car {
 
 
 class Truck: Car {
+
     func transportCargo(cargoWeight: Double, distance: Double) {
         if move(distance: distance + cargoWeight / 5) {
             print("I'm strong! I'm transport cargo weighing \(cargoWeight) tons!")
@@ -165,55 +156,111 @@ enum CarType: String {
 
 class Factory {
 
-    var carCounter: Int
-    var name: String
-
-    init(name: String) {
-        self.carCounter = 0
-        self.name = name
-    }
-
-    func releaseCar(carType: CarType, engine: Engine, driveUnit: DriveUnit, maxFuel: Double) -> Car {
-        carCounter += 1
-        switch carType {
-        case .sedan:
-            return Sedan(engine: engine, driveUnit: driveUnit, maxFuel: maxFuel, manufactorer: self.name)
-        case .offroad:
-            return Offroad(engine: engine, driveUnit: driveUnit, maxFuel: maxFuel, manufactorer: self.name)
-        case .bus:
-            return Bus(engine: engine, driveUnit: driveUnit, maxFuel: maxFuel, manufactorer: self.name)
-        case .truck:
-            return Truck(engine: engine, driveUnit: driveUnit, maxFuel: maxFuel, manufactorer: self.name)
+    private var _carCounter: Int
+    private var _name: String
+    private var _sedanParking: [Sedan]
+    private var _offroadParking: [Offroad]
+    private var _busParking: [Bus]
+    private var _truckParking: [Truck]
+    
+    var carCounter: Int {
+        get {
+            return _carCounter
         }
     }
+    var name: String {
+        get {
+            return _name
+        }
+    }
+
+    init(name: String) {
+        _name = name
+        _carCounter = 0
+        _sedanParking = []
+        _offroadParking = []
+        _busParking = []
+        _truckParking = []
+    }
+
+    private func createSedan(engine: Engine, driveUnit: DriveUnit, maxFuel: Double) -> Void {
+        _sedanParking.append(
+            Sedan(engine: engine, driveUnit: driveUnit, maxFuel: maxFuel, manufactorer: self)
+        )
+    }
+
+    private func createOffroad(engine: Engine, driveUnit: DriveUnit, maxFuel: Double) -> Void {
+        _offroadParking.append(
+            Offroad(engine: engine, driveUnit: driveUnit, maxFuel: maxFuel, manufactorer: self)
+        )
+    }
+
+    private func createBus(engine: Engine, driveUnit: DriveUnit, maxFuel: Double) -> Void {
+        _busParking.append(
+            Bus(engine: engine, driveUnit: driveUnit, maxFuel: maxFuel, manufactorer: self)
+        )
+    }
+
+    private func createTruck(engine: Engine, driveUnit: DriveUnit, maxFuel: Double) -> Void {
+        _truckParking.append(
+            Truck(engine: engine, driveUnit: driveUnit, maxFuel: maxFuel, manufactorer: self)
+        )
+    }
+
+    func releaseCars(carType: CarType, engine: Engine, driveUnit: DriveUnit, maxFuel: Double, carsCount: Int) -> Void {
+        for _ in 0..<carsCount {
+            _carCounter += 1
+
+            switch carType {
+            case .sedan:
+                createSedan(engine: engine, driveUnit: driveUnit, maxFuel: maxFuel)
+            case .offroad:
+                createOffroad(engine: engine, driveUnit: driveUnit, maxFuel: maxFuel)
+            case .bus:
+                createBus(engine: engine, driveUnit: driveUnit, maxFuel: maxFuel)
+            case .truck:
+                createTruck(engine: engine, driveUnit: driveUnit, maxFuel: maxFuel)
+            }
+        }
+    }
+
+    func getReleasedSedans() -> [Sedan] {
+        var result: [Sedan] = []
+
+        for _ in 0..<_sedanParking.count {
+            result.append(_sedanParking.removeLast())
+        }
+
+        return result
+    }
+    
+    func getReleasedOffroads() -> [Offroad] {
+        var result: [Offroad] = []
+
+        for _ in 0..<_offroadParking.count {
+            result.append(_offroadParking.removeLast())
+        }
+
+        return result
+    }
+
+    func getReleasedBuses() -> [Bus] {
+        var result: [Bus] = []
+
+        for _ in 0..<_busParking.count {
+            result.append(_busParking.removeLast())
+        }
+
+        return result
+    }
+
+    func getReleasedTrucks() -> [Truck] {
+        var result: [Truck] = []
+
+        for _ in 0..<_truckParking.count {
+            result.append(_truckParking.removeLast())
+        }
+
+        return result
+    }
 }
-
-
-let factory = Factory(name: "Factory1")
-
-let offroadEngine = DieselEngine(power: 320, cylinderScheme: .V6, fuelConsumption: 9.0)
-let offroad = factory.releaseCar(carType: .offroad, engine: offroadEngine, driveUnit: .four, maxFuel: 90) as? Offroad
-
-offroad?.refuel(fuelQuantity: 40)
-offroad?.moveToOffroad(distance: 10)
-
-
-let truckEngine = DieselEngine(power: 450, cylinderScheme: .V10, fuelConsumption: 15.0)
-let truck = factory.releaseCar(carType: .truck, engine: truckEngine, driveUnit: .four, maxFuel: 200) as? Truck
-
-truck?.refuel(fuelQuantity: 70)
-truck?.transportCargo(cargoWeight: 20, distance: 5)
-
-
-let busEngine = DieselEngine(power: 400, cylinderScheme: .V10, fuelConsumption: 12.0)
-let bus = factory.releaseCar(carType: .bus, engine: busEngine, driveUnit: .four, maxFuel: 220) as? Bus
-
-bus?.refuel(fuelQuantity: 40)
-bus?.transportManyPassengers(passengersCount: 20, distance: 30)
-
-
-let sedanEngine = GasolineEngine(power: 160, cylinderScheme: .Line4, fuelConsumption: 8.0, type: .injection)
-let sedan = factory.releaseCar(carType: .sedan, engine: truckEngine, driveUnit: .front, maxFuel: 60) as? Sedan
-
-sedan?.refuel(fuelQuantity: 30)
-sedan?.transpotPassengers(passengersCount: 4, distance: 10)
