@@ -488,120 +488,111 @@ enum CarType: String {
 }
 
 
-protocol CarReleaseDelegate: AnyObject {
-    func releaseCars(carType: CarType, engine: Engine, wheelType: Wheel, driveUnit: DriveUnit, maxFuel: Double, carsCount: Int)
-    func getReleasedSedans(count: Int) -> [Sedan]
-    func getReleasedOffroads(count: Int) -> [Offroad]
-    func getReleasedBuses(count: Int) -> [Bus]
-    func getReleasedTrucks(count: Int) -> [Truck]
+protocol CarStorageDelegate: AnyObject {
+    func store(sedans: [Sedan])
+    func store(offroads: [Offroad])
+    func store(buses: [Bus])
+    func store(trucks: [Truck])
 }
 
 
-class Factory: CarReleaseDelegate {
-    private var sedanParking: [Sedan] = []
-    private var offroadParking: [Offroad] = []
-    private var busParking: [Bus] = []
-    private var truckParking: [Truck] = []
+class Factory {
 
     private(set) var carCounter: Int
     private(set) var name: String
+
+    weak var storeDelegate: CarStorageDelegate?
 
     init(name: String) {
         self.name = name
         self.carCounter = 0
     }
-
-    private func createSedan(engine: Engine, driveUnit: DriveUnit, maxFuel: Double) {
-        sedanParking.append(
-            Sedan(engine: engine, driveUnit: driveUnit, maxFuel: maxFuel, manufactorer: self, wheelType: Wheel(radius: 16, width: 6.5))
-        )
+    
+    private func store(sedans: [Sedan]) {
+        storeDelegate?.store(sedans: sedans)
     }
 
-    private func createOffroad(engine: Engine, driveUnit: DriveUnit, maxFuel: Double) {
-        offroadParking.append(
-            Offroad(engine: engine, driveUnit: driveUnit, maxFuel: maxFuel, manufactorer: self, wheelType: Wheel(radius: 18, width: 7.5))
-        )
+    private func store(offroads: [Offroad]) {
+        storeDelegate?.store(offroads: offroads)
+    }
+    
+    private func store(buses: [Bus]) {
+        storeDelegate?.store(buses: buses)
+    }
+    
+    private func store(trucks: [Truck]) {
+        storeDelegate?.store(trucks: trucks)
     }
 
-    private func createBus(engine: Engine, driveUnit: DriveUnit, maxFuel: Double) {
-        busParking.append(
-            Bus(engine: engine, driveUnit: driveUnit, maxFuel: maxFuel, manufactorer: self, wheelType: Wheel(radius: 22, width: 7), wheelAxlesCount: 3, passengerSeatsCount: 30)
-        )
+    private func createSedans(engine: Engine, driveUnit: DriveUnit, maxFuel: Double, count: Int) {
+        var createdSedans: [Sedan] = []
+
+        for _ in 1...count {
+            createdSedans.append(
+                Sedan(engine: engine, driveUnit: driveUnit, maxFuel: maxFuel, manufactorer: self, wheelType: Wheel(radius: 16, width: 6.5))
+            )
+        }
+
+        store(sedans: createdSedans)
     }
 
-    private func createTruck(engine: Engine, driveUnit: DriveUnit, maxFuel: Double) {
-        truckParking.append(
-            Truck(engine: engine, driveUnit: driveUnit, maxFuel: maxFuel, manufactorer: self, wheelType: Wheel(radius: 24, width: 8), wheelAxlesCount: 2, cargoCapacity: 20)
-        )
+    private func createOffroads(engine: Engine, driveUnit: DriveUnit, maxFuel: Double, count: Int) {
+        var createdOffroads: [Offroad] = []
+        
+        for _ in 1...count {
+            createdOffroads.append(
+                Offroad(engine: engine, driveUnit: driveUnit, maxFuel: maxFuel, manufactorer: self, wheelType: Wheel(radius: 18, width: 7.5))
+            )
+        }
+        
+        store(offroads: createdOffroads)
+    }
+
+    private func createBuses(engine: Engine, driveUnit: DriveUnit, maxFuel: Double, count: Int) {
+        var createdBuses: [Bus] = []
+
+        for _ in 1...count {
+            createdBuses.append(
+                Bus(engine: engine, driveUnit: driveUnit, maxFuel: maxFuel, manufactorer: self, wheelType: Wheel(radius: 22, width: 7), wheelAxlesCount: 3, passengerSeatsCount: 30)
+            )
+        }
+        
+        store(buses: createdBuses)
+    }
+
+    private func createTrucks(engine: Engine, driveUnit: DriveUnit, maxFuel: Double, count: Int) {
+        var createdTrucks: [Truck] = []
+        
+        for _ in 1...count {
+            createdTrucks.append(
+                Truck(engine: engine, driveUnit: driveUnit, maxFuel: maxFuel, manufactorer: self, wheelType: Wheel(radius: 24, width: 8), wheelAxlesCount: 2, cargoCapacity: 20)
+            )
+        }
+        
+        store(trucks: createdTrucks)
     }
 
     func releaseCars(carType: CarType, engine: Engine, wheelType: Wheel, driveUnit: DriveUnit, maxFuel: Double, carsCount: Int) {
-        for _ in 0..<carsCount {
-            carCounter += 1
-
-            switch carType {
-            case .sedan:
-                createSedan(engine: engine, driveUnit: driveUnit, maxFuel: maxFuel)
-            case .offroad:
-                createOffroad(engine: engine, driveUnit: driveUnit, maxFuel: maxFuel)
-            case .bus:
-                createBus(engine: engine, driveUnit: driveUnit, maxFuel: maxFuel)
-            case .truck:
-                createTruck(engine: engine, driveUnit: driveUnit, maxFuel: maxFuel)
-            }
+        switch carType {
+        case .sedan:
+            createSedans(engine: engine, driveUnit: driveUnit, maxFuel: maxFuel, count: carsCount)
+        case .offroad:
+            createOffroads(engine: engine, driveUnit: driveUnit, maxFuel: maxFuel, count: carsCount)
+        case .bus:
+            createBuses(engine: engine, driveUnit: driveUnit, maxFuel: maxFuel, count: carsCount)
+        case .truck:
+            createTrucks(engine: engine, driveUnit: driveUnit, maxFuel: maxFuel, count: carsCount)
         }
-    }
-
-    func getReleasedSedans(count: Int) -> [Sedan] {
-        var result: [Sedan] = []
-
-        for _ in 0..<count {
-            result.append(sedanParking.removeLast())
-        }
-
-        return result
-    }
-    
-    func getReleasedOffroads(count: Int) -> [Offroad] {
-        var result: [Offroad] = []
-
-        for _ in 0..<count {
-            result.append(offroadParking.removeLast())
-        }
-
-        return result
-    }
-
-    func getReleasedBuses(count: Int) -> [Bus] {
-        var result: [Bus] = []
-
-        for _ in 0..<count {
-            result.append(busParking.removeLast())
-        }
-
-        return result
-    }
-
-    func getReleasedTrucks(count: Int) -> [Truck] {
-        var result: [Truck] = []
-
-        for _ in 0..<count {
-            result.append(truckParking.removeLast())
-        }
-
-        return result
     }
 }
 
 
-class Dealer {
+class Dealer: CarStorageDelegate {
 
     private var sedanParking: [Sedan] = []
     private var offroadParking: [Offroad] = []
     private var busParking: [Bus] = []
     private var truckParking: [Truck] = []
-
-    weak var factoryDelegate: CarReleaseDelegate?
     
     private(set) var name: String
     private(set) var address: String
@@ -610,25 +601,21 @@ class Dealer {
         self.name = name
         self.address = address
     }
-
-    // Witness Table Dispatch
-    func releaseCars(carType: CarType, engine: Engine, wheelType: Wheel, driveUnit: DriveUnit, maxFuel: Double, carsCount: Int) {
-        if let factory = factoryDelegate {
-            factory.releaseCars(carType: carType, engine: engine, wheelType: Wheel(radius: 16, width: 6.5), driveUnit: driveUnit, maxFuel: maxFuel, carsCount: carsCount)
-            
-            switch carType {
-            case .sedan:
-                sedanParking.append(contentsOf: factory.getReleasedSedans(count: carsCount))
-            case .offroad:
-                offroadParking.append(contentsOf: factory.getReleasedOffroads(count: carsCount))
-            case .bus:
-                offroadParking.append(contentsOf: factory.getReleasedOffroads(count: carsCount))
-            case .truck:
-                truckParking.append(contentsOf: factory.getReleasedTrucks(count: carsCount))
-            }
-        } else {
-            print("Dialer \(name) don't have manufactorer!")
-        }
+    
+    func store(sedans: [Sedan]) {
+        sedanParking.append(contentsOf: sedans)
+    }
+    
+    func store(offroads: [Offroad]) {
+        offroadParking.append(contentsOf: offroads)
+    }
+    
+    func store(buses: [Bus]) {
+        busParking.append(contentsOf: buses)
+    }
+    
+    func store(trucks: [Truck]) {
+        truckParking.append(contentsOf: trucks)
     }
 
     func shipSedan() -> Sedan? {
@@ -648,13 +635,14 @@ class Dealer {
     }
 }
 
-
+var dealer = Dealer(name: "KIA", address: "Moscow")
 var factory = Factory(name: "Factory1")
+factory.storeDelegate = dealer
 factory.releaseCars(carType: .offroad, engine: Engine(power: 250, cylinderScheme: .V6, fuelConsumption: 10, type: .diesel), wheelType: Wheel(radius: 16, width: 6.5), driveUnit: .four, maxFuel: 90, carsCount: 1)
 
-var dealer = Dealer(name: "KIA", address: "Moscow")
-dealer.factoryDelegate = factory
-
-dealer.releaseCars(carType: .offroad, engine: Engine(power: 250, cylinderScheme: .V6, fuelConsumption: 10, type: .diesel), wheelType: Wheel(radius: 16, width: 6.5), driveUnit: .four, maxFuel: 90, carsCount: 1)
+factory.releaseCars(carType: .offroad, engine: Engine(power: 250, cylinderScheme: .V6, fuelConsumption: 10, type: .diesel), wheelType: Wheel(radius: 16, width: 6.5), driveUnit: .four, maxFuel: 90, carsCount: 1)
 
 var dealer2 = Dealer(name: "BMW", address: "SPb")
+
+
+dealer.shipOffroad()
