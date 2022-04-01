@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		443CD0A727F6E16300FB3726 /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 443CD0A627F6E16300FB3726 /* TabBarController.swift */; };
+		443CD0A927F6E60500FB3726 /* NavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 443CD0A827F6E60500FB3726 /* NavigationController.swift */; };
+		443CD0AB27F6E8DF00FB3726 /* RPSViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 443CD0AA27F6E8DF00FB3726 /* RPSViewController.swift */; };
+		443CD0AD27F6E8EE00FB3726 /* DiceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 443CD0AC27F6E8EE00FB3726 /* DiceViewController.swift */; };
 		44AB991527F36E3300B3915B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44AB991427F36E3300B3915B /* AppDelegate.swift */; };
 		44AB991727F36E3300B3915B /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44AB991627F36E3300B3915B /* SceneDelegate.swift */; };
 		44AB991E27F36E3600B3915B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 44AB991D27F36E3600B3915B /* Assets.xcassets */; };
@@ -14,6 +18,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		443CD0A627F6E16300FB3726 /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
+		443CD0A827F6E60500FB3726 /* NavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationController.swift; sourceTree = "<group>"; };
+		443CD0AA27F6E8DF00FB3726 /* RPSViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RPSViewController.swift; sourceTree = "<group>"; };
+		443CD0AC27F6E8EE00FB3726 /* DiceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiceViewController.swift; sourceTree = "<group>"; };
 		44AB991127F36E3300B3915B /* GameApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GameApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		44AB991427F36E3300B3915B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		44AB991627F36E3300B3915B /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -57,6 +65,10 @@
 				44AB991D27F36E3600B3915B /* Assets.xcassets */,
 				44AB991F27F36E3600B3915B /* LaunchScreen.storyboard */,
 				44AB992227F36E3600B3915B /* Info.plist */,
+				443CD0A627F6E16300FB3726 /* TabBarController.swift */,
+				443CD0A827F6E60500FB3726 /* NavigationController.swift */,
+				443CD0AA27F6E8DF00FB3726 /* RPSViewController.swift */,
+				443CD0AC27F6E8EE00FB3726 /* DiceViewController.swift */,
 			);
 			path = GameApp;
 			sourceTree = "<group>";
@@ -131,6 +143,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				443CD0A727F6E16300FB3726 /* TabBarController.swift in Sources */,
+				443CD0AD27F6E8EE00FB3726 /* DiceViewController.swift in Sources */,
+				443CD0A927F6E60500FB3726 /* NavigationController.swift in Sources */,
+				443CD0AB27F6E8DF00FB3726 /* RPSViewController.swift in Sources */,
 				44AB991527F36E3300B3915B /* AppDelegate.swift in Sources */,
 				44AB991727F36E3300B3915B /* SceneDelegate.swift in Sources */,
 			);
